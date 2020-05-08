@@ -1,7 +1,0 @@
-_phone = 79000000000
-_phone9 = 9000000000
-_phoneAresBank = +7(900)000-00-00
-_phone9dostavista = 900+000-00-00
-_phoneOstin = +7+(900)000-00-00
-_phonePizzahut = +7 (900) 000 00 00
-_phoneGorzdrav = 900) 000-00-00
