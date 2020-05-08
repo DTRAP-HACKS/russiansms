@@ -24,7 +24,7 @@ def main(_param, _phone, _quantity, _time, _percent):
         else:
             if try_calls(_phone) == 1: _quantity -=1
         sleep(_time)
-        if _param == "g": print("Осталось: " + str(_quantity))
+        if _param == "-g": print("Осталось: " + str(_quantity))
 
 params = []        
 if __name__ == "__main__":
