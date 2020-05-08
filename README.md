@@ -22,7 +22,8 @@ git clone https://github.com/MaksPV/AresBomb
 
 # Запуск
 ```sh
-python AresBomb/ui.py
+cd AresBomb
+python ui.py
 ```
 
 # API
