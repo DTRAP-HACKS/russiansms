@@ -24,6 +24,17 @@ git clone https://github.com/MaksPV/AresBomb
 python AresBomb/boom.py
 ```
 
+# API
+Запуск бомбина из консоли
+```sh
+python core.py <выбор режима работы> <номер телефона в формате 79000000000> <количество сообщений> <интервал между их отправкой в секундах>
+
+Режимы запуска бомбера:
+-g - печатать отчёт в консоль
+
+Пример:
+python core.py -g 79104342719 100 1.5
+
 # Ссылочки
 * [t.me/AresBomb](telete.in/AresBomb) - Телеграм канал на котором новости проекта
 * [t.me/Maksimushka](telete.in/Maksimushka) - Автор бомбера
