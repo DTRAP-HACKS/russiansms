@@ -42,4 +42,3 @@ python core.py - 79058625419 98 0
 # Ссылочки
 * [t.me/AresBomb](telete.in/AresBomb) - Телеграм канал на котором новости проекта
 * [t.me/Maksimushka](telete.in/Maksimushka) - Автор бомбера
-* [spymer](https://github.com/FSystem88/spymer) - Автор самого первоначального бомбера, оказывается код человека, которого я взял код за основу спиздил код у него :/
