@@ -25,11 +25,11 @@ def generate(mode, name):
 		q -= 1
 	file += "    serv = random.randint(0, " + str(b) + ")\n"
 	file += file1
-	if mode == "s":
+	if mode == "-s":
 		sms = open("sms.py", "w")
 		sms.write(file)
 		sms.close
-	if mode == "c":
+	if mode == "-c":
 		calls = open("calls.py", "w")
 		calls.write(file)
 		calls.close
