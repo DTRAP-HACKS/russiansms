@@ -1,3 +1,5 @@
+import sys
+
 def count_lines(filename, chunk_size=1<<13):
     with open(filename) as file:
         return sum(chunk.count('\n')
@@ -14,6 +16,7 @@ def generate(mode, name):
 		if line[:2] == "p:":
 			file += "    " + line[3:]
 		elif line[:2] == "c:": print(line[3:])
+		elif line[:2] == "\n": pass
 		else:
 			file1 += "    if serv == " + str(q) + ": requests." + line
 			if a == 1:
@@ -30,3 +33,9 @@ def generate(mode, name):
 		calls = open("calls.py", "w")
 		calls.write(file)
 		calls.close
+
+params = []
+if __name__ == "__main__":
+	for param in sys.argv:
+		params.append(param)
+	generate(params[1], params[2])
