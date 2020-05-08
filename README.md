@@ -18,10 +18,11 @@ pkg install python
 pip install requests
 git clone https://github.com/MaksPV/AresBomb
 ```
+Вам надо ещё найти базы данных с расширением .arsdat
 
 # Запуск
 ```sh
-python AresBomb/boom.py
+python AresBomb/ui.py
 ```
 
 # API
