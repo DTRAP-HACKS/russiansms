@@ -28,11 +28,11 @@ def generate(mode, name):
 	if mode == "-s":
 		sms = open("sms.py", "w")
 		sms.write(file)
-		sms.close
+		sms.close()
 	if mode == "-c":
 		calls = open("calls.py", "w")
 		calls.write(file)
-		calls.close
+		calls.close()
 
 params = []
 if __name__ == "__main__":
