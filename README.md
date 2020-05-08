@@ -16,7 +16,7 @@ AresBomb - это SMS/Call бомбер с приятными фичами и а
 pkg install git
 pkg install python
 pip install requests
-git clone https://github.com/MaksPV/AresBomb
+git clone https://github.com/MaksPV/AresBomb/tree/new-version
 ```
 Вам надо ещё найти базы данных с расширением .arsdat
 
