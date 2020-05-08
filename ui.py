@@ -4,9 +4,9 @@ try:
 	import core
 except:
 	if os.path.isfile("sms.py") != 1:
-		generate.generate("s", (input("Введите имя файла базы данных для смс: ") + ".arsdat"))
+		generate.generate("-s", (input("Введите имя файла базы данных для смс: ") + ".arsdat"))
 	if os.path.isfile("calls.py") != 1:
-		generate.generate("c", (input("Введите имя файла базы данных для звонков: ") + ".arsdat"))
+		generate.generate("-c", (input("Введите имя файла базы данных для звонков: ") + ".arsdat"))
 	exit()
 
 banner = ("\n" * 100)+ """
@@ -48,7 +48,7 @@ def bomb():
 	if _phone[0] == '8': _phone = '7'+_phone[1:]
 	if _phone[0] == '9': _phone = '7'+_phone
 	
-	core.main("g", _phone, _count, _timer, set[1])
+	core.main("-g", _phone, _count, _timer, set[1])
 
 while True:
 	print(banner)
