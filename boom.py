@@ -69,7 +69,7 @@ def update():
 			f = open("boom.py", "wb")
 			f.write(upd_boom.content)
 			f.close()
-			print("\nОбновление завершено, откройте бомбер заново командой\npython boom.py")
+			print("\nОбновление завершено, откройте бомбер заново командой\npython AresBomb/boom.py")
 			return "exit"
 		elif upd_vers == version: print("Установлена последняя версия, вы прекрасны")
 		elif upd_vers < version: print("Не хочешь попасть в команду?")
