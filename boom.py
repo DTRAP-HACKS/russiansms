@@ -2,7 +2,7 @@ import requests
 import random, datetime, sys, time, argparse, os
 from requests import post
 
-version = 1.051
+version = 1.052
 set = [1, 10]
 fav_phones = []
 
@@ -245,7 +245,9 @@ while True:
  | |_) | (_) | | | | | | |_) |
  |____/ \___/|_| |_| |_|_.__/ 
 
- telegram channel: @AresBomb                         
+ telegram channel: @AresBomb
+
+!!! Сервисы немного устарели, но некоторые работают !!!                        
 	"""
 	print(banner)
 	menu = input("1 - Начать бомбинг\n2 - Настройки бомбера\n3 - Номера в избранном\n4 - Информация о бомбере\n\n0 - Выход\n")
