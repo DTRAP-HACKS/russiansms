@@ -180,7 +180,7 @@ def settings():
         print("\n0 - Выход из этого меню и сохранение")
         menu = input()
         if menu == "0":
-            with open('config.data', 'w') as filehandle:  
+            with open('config.txt', 'w') as filehandle:  
                 for listitem in set:
                     filehandle.write('%s\n' % listitem)
             break
