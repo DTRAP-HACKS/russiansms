@@ -2,7 +2,7 @@ import requests, time
 import random, os, codecs
 from sys import exit
 
-version = 2
+version = 2.01
 set = [1, 0]
 fav_phones = []
 repo = "MaksPV/AresBomb-databases"
